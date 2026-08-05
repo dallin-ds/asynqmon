@@ -37,11 +37,11 @@ COPY . .
 # Dragonfly requires scripts to explicitly opt in when they derive keys at
 # runtime. Asynq's queue metrics scripts inspect task and group keys this way.
 RUN sed -i \
-      -e 's/var currentStatsCmd = redis.NewScript(`/var currentStatsCmd = redis.NewScript(`#!lua flags=allow-undeclared-keys/' \
-      -e 's/var memoryUsageCmd = redis.NewScript(`/var memoryUsageCmd = redis.NewScript(`#!lua flags=allow-undeclared-keys/' \
+      -e 's/var currentStatsCmd = redis.NewScript(`/var currentStatsCmd = redis.NewScript(`--!df flags=allow-undeclared-keys/' \
+      -e 's/var memoryUsageCmd = redis.NewScript(`/var memoryUsageCmd = redis.NewScript(`--!df flags=allow-undeclared-keys/' \
       vendor/github.com/hibiken/asynq/internal/rdb/inspect.go \
-    && grep -Fq 'var currentStatsCmd = redis.NewScript(`#!lua flags=allow-undeclared-keys' vendor/github.com/hibiken/asynq/internal/rdb/inspect.go \
-    && grep -Fq 'var memoryUsageCmd = redis.NewScript(`#!lua flags=allow-undeclared-keys' vendor/github.com/hibiken/asynq/internal/rdb/inspect.go
+    && grep -Fq 'var currentStatsCmd = redis.NewScript(`--!df flags=allow-undeclared-keys' vendor/github.com/hibiken/asynq/internal/rdb/inspect.go \
+    && grep -Fq 'var memoryUsageCmd = redis.NewScript(`--!df flags=allow-undeclared-keys' vendor/github.com/hibiken/asynq/internal/rdb/inspect.go
 
 # Copy frontend static files from /static to the root folder of the backend container.
 COPY --from=frontend ["/static/build", "ui/build"]
